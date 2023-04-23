@@ -1,40 +1,25 @@
-/*
-  APDS9960 - All sensor data from APDS9960
-
-  This example reads all data from the on-board APDS9960 sensor of the
-  Nano 33 BLE Sense:
-   - color RGB (red, green, blue)
-   - proximity
-   - gesture
-  and prints updates to the Serial Monitor every 100 ms.
-
-  The circuit:
-  - Arduino Nano 33 BLE Sense
-
-  This example code is in the public domain.
-*/
 
 #include <Arduino_MKRIoTCarrier.h>
 MKRIoTCarrier carrier;
-
+int moistPin;
+float humidity;
+float temperature;
+int light;
+int moisture;
 
 void setup() {
   Serial.begin(9600);
+    // This delay gives the chance to wait for a Serial Monitor without blocking if none is found
+
   while (!Serial); // Wait for serial monitor to open
 
   carrier.noCase();
   if (!carrier.begin()) {
     Serial.println("Error");
     while (true); // Stop forever
-  }
+  } 
 }
 
-float humidity;
-float temperature;
-int light;
-int moisture;
-
-int moistPin;
 
 unsigned long lastUpdate = 0;
 
@@ -44,7 +29,7 @@ void loop() {
   humidity = carrier.Env.readHumidity();
  
   //read raw moisture value
-  int raw_moisture = analogRead(moistPin);
+  int raw_moisture = analogRead(A5);
  
   //map raw moisture to a scale of 0 - 100
   moisture = map(raw_moisture, 0, 1023, 100, 0);
@@ -60,16 +45,16 @@ void loop() {
   // Serial.println(millis() - lastUpdate);
 
   // Print updates every 100ms
-  if (millis() - lastUpdate > 60000) {
+  if (millis() - lastUpdate > 600) {
     lastUpdate = millis();
-    Serial.print("LIGHT TURNED ON||");
-    Serial.println(light);
+    Serial.print("LIGHT||");
+    Serial.println(light,1);
     Serial.print("TEMP||");
-    Serial.println(temperature);
+    Serial.println(temperature,1);
     Serial.print("HUMIDITY||");
-    Serial.println(humidity);
+    Serial.println(humidity,1);
     Serial.print("MOISTURE||");
-    Serial.println(moisture);
+    Serial.println(moisture,1);
   }
 
 
